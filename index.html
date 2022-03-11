@@ -4,16 +4,28 @@
   </head>
   <body>
     <canvas></canvas>
+    <select></select>
+    <div></div>
+    <button>Start</button>
   </body>
   <script type="module">
+    import { next, parse } from './src/engine.js';
+
     const scale = 4;
     const worldWidth = 480;
     const worldHeight = 240;
 
+    const select = document.querySelector("select");
+    const descriptionDiv = document.querySelector("div");
+    const startButton = document.querySelector("button");
     const canvas = document.querySelector("canvas");
     canvas.width = worldWidth * scale;
     canvas.height = worldHeight * scale;
     const ctx = canvas.getContext("2d");
+    let interval = null;
+    let currentWorld = null;
+
+    let lexicon = null;
 
     const render = (world) => {
       ctx.fillStyle = "#202020";
