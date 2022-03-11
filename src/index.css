@@ -16,3 +16,7 @@ canvas {
   max-height: 960px;
   max-width: 1920px;
 }
+
+div {
+  color: #fff;
+}
