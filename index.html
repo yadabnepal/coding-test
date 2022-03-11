@@ -34,9 +34,55 @@
       world.forEach((row, y) =>
         row.forEach(
           (alive, x) =>
-            alive && ctx.fillRect(x * scale, y * scale, scale - 1, scale - 1)
+            alive && ctx.fillRect((worldWidth/2 + x) * scale, (worldHeight / 2 + y) * scale + (y * scale), scale - 1, scale - 1)
         )
       );
     };
+
+    const populatePatterns = (response) => {
+       lexicon = JSON.parse(response);
+
+       lexicon.forEach(({ name }) => {
+        const option = document.createElement("option");
+        option.value = name;
+        option.text = name;
+        select.add(option)
+       });
+
+       descriptionDiv.textContent = lexicon.find(({ name }) => name === select.value)?.description;
+    }
+
+    const initialize = () => {
+      const request = new XMLHttpRequest();
+
+      request.open('GET', './src/lexicon.json');
+      request.send();
+
+      request.addEventListener("load", () => {
+        if (request.status == 200) {
+          populatePatterns(request.response);
+        }
+      });
+
+      select.addEventListener('change', () => {
+        clearInterval(interval);
+        descriptionDiv.textContent = lexicon.find(({ name }) => name === select.value)?.description;
+      })
+
+      startButton.addEventListener('click', () => {
+        const selectedOption = lexicon.find(({ name }) => name === select.value);
+        currentWorld = parse(selectedOption.pattern)
+
+        render(currentWorld);
+
+        interval = setInterval(() => {
+          currentWorld = next(currentWorld);
+
+          render (currentWorld)
+        }, [100])
+      })
+    }
+
+    initialize();
   </script>
 </html>
